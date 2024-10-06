@@ -3,7 +3,7 @@
 
 # Key 🔑
 
-> Comprehensive in KeyChain framework
+> Comprehensive KeyChain framework
 
 ### Features
 - Provides support for requiring "biometric authentication" before read/write operations for added security
