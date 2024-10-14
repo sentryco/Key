@@ -127,3 +127,4 @@ restored to a new device, these items will be missing.
 - Idea for exporting keychains: https://scriptingosx.com/2021/04/get-password-from-keychain-in-shell-scripts/
 - Find and add the tests from xcodeproj. Should be around somewhere ✅
 - Add note about using JSONSugar in the test 
+- add unit test to keywrapper in telemetry
