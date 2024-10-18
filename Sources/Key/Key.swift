@@ -1,10 +1,18 @@
 import Foundation
 /**
  * High-level `KeyChain` wrapper (Simplifies working with the KeyChain API)
- * - Description: `Key` is a high-level Keychain wrapper that simplifies interactions with the iOS Keychain API, providing methods for securely storing, retrieving, and managing data.
- * - Remark: Example code and tests are in the `KeyExample` xcode project (KeyChain doesn't work well outside xcode projects, it can be done but requires attaching a target etc, maybe add that later etc?)
- * - Remark: This framework enables writing and reading raw data into keychain. Storing structs or other objects that are serializable to Data. Keychain should not be used to store vast amounts of data. So use this functioality with some caution.
- * - Remark: There is a lot of subtle documentation for different cases throughout this fraework that can be useful for expert usage etc
+ * - Description: `Key` is a high-level Keychain wrapper that simplifies
+ *                interactions with the iOS Keychain API, providing methods
+ *                for securely storing, retrieving, and managing data.
+ * - Remark: Example code and tests are in the `KeyExample` xcode project
+ *           (KeyChain doesn't work well outside xcode projects, it can be done
+ *           but requires attaching a target etc, maybe add that later etc?)
+ * - Remark: This framework enables writing and reading raw data into keychain.
+ *           Storing structs or other objects that are serializable to Data.
+ *           Keychain should not be used to store vast amounts of data. So use
+ *           this functionality with some caution.
+ * - Remark: There is a lot of subtle documentation for different cases
+ *           throughout this framework that can be useful for expert usage etc
  * - Note: More unit tests: https://www.raywenderlich.com/9240-keychain-services-api-tutorial-for-passwords-in-swift
  * - Note: More unit tests: https://gist.github.com/s-aska/e7ad24175fb7b04f78e7#file-keychaintests-swift
  * - Fixme: ⚠️️ Add has(query) assert method
@@ -12,7 +20,9 @@ import Foundation
 public final class Key {
    /**
     * Get result for `KeyQuery` Returns Data & throws Error msg
-    * - Description: Retrieves the data associated with a given `KeyQuery` from the keychain and returns it. If the data is not found or an error occurs, this method throws an error.
+    * - Description: Retrieves the data associated with a given `KeyQuery` from
+    *                the keychain and returns it. If the data is not found or an
+    *                error occurs, this method throws an error.
     * - Parameter query: The "address" for the keychain
     * ## Examples:
     * Key.get(query: .init(key: "1234")).string // Reads data (you might have to cast as Data and init utf8 string from data now)
@@ -31,7 +41,8 @@ public final class Key {
     * Set data for keyQuery (returns error msg)
     * - Description: Inserts or updates a keychain item with the specified data and query parameters.
     * - Remark: Setting bio-auth locked items doesn't require context, only reading does
-    * - Remark: Insert is also used as an update method, as the write call creates new or alters pre-existing item etc
+    * - Remark: Insert is also used as an update method, as the write call
+    *           creates new or alters pre-existing item etc
     * ## Examples:
     * Key.set(data: .init(from: "Hello world"), query: .init(key: "1234")) // stores data
     * - Parameters:
@@ -87,7 +98,10 @@ public final class Key {
    }
    /**
     * Clears all items in `KeyChain` that matches the `KeyQuery` (returns delete count)
-    * - Description: Removes all keychain items that match the given query parameters. This method is useful when you need to reset or clear out all keychain items associated with a particular service, access group, or other specified attributes.
+    * - Description: Removes all keychain items that match the given query
+    *                parameters. This method is useful when you need to reset or
+    *                clear out all keychain items associated with a particular
+    *                service, access group, or other specified attributes.
     * - Remark: We can set key in query to "", since it has no relevance calling this method etc
     * - Remark: This won't remove other `KeyChain` entries you did not add via the current app
     * - Parameter query: The query construct
@@ -119,7 +133,10 @@ public final class Key {
    }
    /**
     * Count (convenient)
-    * - Description: Returns the count of keychain items that match the given query parameters. This method is useful for verifying the number of items that meet specific criteria such as service name, access group, accessibility level, and security class.
+    * - Description: Returns the count of keychain items that match the given
+    *                query parameters. This method is useful for verifying the
+    *                number of items that meet specific criteria such as service
+    *                name, access group, accessibility level, and security class.
     * - Example: Count the number of keychain items with service name "MyService" and accessibility level .accessibleWhenUnlocked:
     * ```
     * let count = try? KeyReader.getCount(
@@ -136,7 +153,8 @@ public final class Key {
     *     print("Error counting keychain items")
     * }
     * ```
-    * - Parameter query: The query object that specifies the parameters to match. If nil, all keychain items are deleted.
+    * - Parameter query: The query object that specifies the parameters
+    *                    to match. If nil, all parameters are matched.
     * - Throws: An error if the delete operation fails.
     */
    public static func getCount(_ query: KeyQuery? = nil) throws -> Int {

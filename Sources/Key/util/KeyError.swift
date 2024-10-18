@@ -8,8 +8,9 @@ public enum KeyError: Error {
 }
 extension KeyError {
    /**
-    * - Description: This computed property provides a localized description of the KeyError. 
-    *   If the error case contains an OSStatus, it returns a human-readable error message for the status code.
+    * - Description: This computed property provides a localized description of the
+    *                KeyError. If the error case contains an OSStatus, it returns a
+    *                human-readable error message for the status code.
     *   Otherwise, it returns a generic error message indicating a KeyError failure.
     * - Remark: You have to cast the instance to get access to status
     * ## Examples:

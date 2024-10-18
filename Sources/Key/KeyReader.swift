@@ -6,7 +6,9 @@ import LocalAuthentication
 public final class KeyReader {
    /**
     * Read data for key and variouse optional params
-    * - Description: Reads the data associated with a given key from the keychain and returns it. If the data is not found or an error occurs, this method throws an error.
+    * - Description: Reads the data associated with a given key from the
+    *                keychain and returns it. If the data is not found or an
+    *                error occurs, this method throws an error.
     * - Parameters:
     *   - key: Key to read data from
     *   - service: `Application-identifier` to associate with
@@ -38,7 +40,10 @@ public final class KeyReader {
    }
    /**
     * Find first item that matches the matchClause
-    * - Description: This method searches for the first keychain item that matches the provided matchClause. It returns a tuple containing the key and value of the first matching item. If no matching item is found, it throws an error.
+    * - Description: This method searches for the first keychain item that
+    *                matches the provided matchClause. It returns a tuple
+    *                containing the key and value of the first matching item.
+    *                If no matching item is found, it throws an error.
     * - Parameters:
     *   - secClass: Of a particular keychain class such as: `kSecClassGenericPassword` (regular password type)
     *   - service: Application identifier to associate with
@@ -89,7 +94,8 @@ public final class KeyReader {
 extension KeyReader {
    /**
     * Returns all keychain items of a particular combination of params
-    * - Description: Retrieves all keychain items that match the specified parameters and returns them as a dictionary of key-value pairs.
+    * - Description: Retrieves all keychain items that match the specified
+    *                parameters and returns them as a dictionary of key-value pairs.
     * - Include value to the key parsing method: https://stackoverflow.com/a/57095200
     * - Fixme: ⚠️️ Add accessControl`?`
     * - Parameters:
@@ -132,7 +138,11 @@ extension KeyReader {
    }
    /**
     * Returns number of keychain-items for this service for instance: bundleIdentifier
-    * - Description: Counts the number of keychain items that match the given parameters. This method is useful for determining the quantity of keychain entries for a specific service, access group, accessibility level, or security class without needing to retrieve the actual data.
+    * - Description: Counts the number of keychain items that match the given
+    *                parameters. This method is useful for determining the
+    *                quantity of keychain entries for a specific service, access
+    *                group, accessibility level, or security class without
+    *                needing to retrieve the actual data.
     * - Fixme: ⚠️️ Add accessControl`?`
     * - Remark: this call doesn't need authentication
     * - Parameters:
@@ -158,7 +168,10 @@ extension KeyReader {
    }
    /**
     * Get the keys of all keychain entries matching params
-    * - Description: Retrieves all keys of the keychain entries that match the given parameters. This method is useful when you need to get a list of all keys associated with a particular service, access group, accessibility level, or security class.
+    * - Description: Retrieves all keys of the keychain entries that match the
+    *                given parameters. This method is useful when you need to get
+    *                a list of all keys associated with a particular service,
+    *                access group, accessibility level, or security class.
     * - Remark: Use `status.readableError` to read status etc
     * - Parameters:
     *   - service: Application identifier to associate with
@@ -191,7 +204,11 @@ extension KeyReader {
 extension KeyReader {
    /**
     * Used in the .first method
-    * - Description: This enumeration is used to define specific error cases that can occur during the key search process in the .first method. These errors include scenarios where the first keychain item is not found, the key is not found, the value is not found, or there is no match in the keychain.
+    * - Description: This enumeration is used to define specific error cases
+    *                that can occur during the key search process in the .first
+    *                method. These errors include scenarios where the first
+    *                keychain item is not found, the key is not found, the value
+    *                is not found, or there is no match in the keychain.
     */
    enum KeySearchError: Error {
       /**
@@ -212,4 +229,3 @@ extension KeyReader {
       case noMatch(_ status: OSStatus)
    }
 }
-

@@ -2,7 +2,9 @@ import Foundation
 import LocalAuthentication
 /**
  * This typealias makes code more readable
- * - Description: A `QueryDict` is a typealias for a dictionary that maps `CFString` keys to `Any` values, used for constructing queries to interact with the keychain.
+ * - Description: A `QueryDict` is a typealias for a dictionary that maps
+ *                `CFString` keys to `Any` values, used for constructing queries to
+ *                interact with the keychain.
  * - Fixme: ⚠️️ We could possibly use `CFDictionary` directly, find out more about this class
  */
 public typealias QueryDict = [CFString: Any]
@@ -13,7 +15,9 @@ extension QueryDict {
    /**
     * Constructs the read query
     * - Abstract: For retreiving Data, does not include meta-data about the item
-    * - Description: This method constructs a query dictionary for reading a specific keychain item's data. It does not include metadata about the item, focusing solely on the data content.
+    * - Description: This method constructs a query dictionary for reading a
+    *                specific keychain item's data. It does not include metadata
+    *                about the item, focusing solely on the data content.
     * - Fixme: ⚠️️ Maybe make `QueryParser`? `QueryMaker`? `QueryDict`?
     * - Parameters:
     *   - key: Key to read data from
@@ -41,7 +45,12 @@ extension QueryDict {
    }
    /**
     * Constructs a dictionary of query attributes for retrieving all keychain items that match the specified parameters
-    * - Description: This method constructs a query dictionary for retrieving all keychain items that match the specified parameters, including service, access group, access restrictions, and keychain class. It is used when you need to obtain a list of all items without their data content, only their attributes.
+    * - Description: This method constructs a query dictionary for retrieving
+    *                all keychain items that match the specified parameters,
+    *                including service, access group, access restrictions, and
+    *                keychain class. It is used when you need to obtain a list
+    *                of all items without their data content, only their
+    *                attributes.
     * - Parameters:
     *   - service: Application identifier to associate with
     *   - accessGroup: A way to differentiate access between different applications.
@@ -65,7 +74,8 @@ extension QueryDict {
    }
    /**
     * Constructs a dictionary of query attributes for retrieving all keychain items of the specified class.
-    * - Description: Constructs a dictionary of query attributes for retrieving all keychain items of the specified class.
+    * - Description: Constructs a dictionary of query attributes for
+    *                retrieving all keychain items of the specified class.
     * - Remark: Used for `.allItemsQuery` and `.firstItemQuery`
     * - Parameters:
     *   - service: Application identifier to associate with
@@ -90,7 +100,10 @@ extension QueryDict {
 extension QueryDict {
    /**
     * Creates modifier query
-    * - Description: Constructs a dictionary of query attributes for modifying keychain items, including data, key, service, access group, access restrictions, keychain class, access control, and context.
+    * - Description: Constructs a dictionary of query attributes for modifying
+    *                keychain items, including data, key, service, access group,
+    *                access restrictions, keychain class, access control, and
+    *                context.
     * - Remark: This makes the modifier methods cleaner (update, write, delete)
     * - Parameters:
     *   - data: Data to be written
@@ -130,7 +143,9 @@ extension QueryDict {
    /**
      * Clear all query
      * - Abstract: Clears all keychain items matching the specified criteria
-     * - Description: Constructs a dictionary of query attributes for clearing keychain items, including service, access group, access restrictions, and keychain class.
+     * - Description: Constructs a dictionary of query attributes for
+     *                clearing keychain items, including service, access
+     *                group, access restrictions, and keychain class.
      * - Remark: This method is useful for removing all keychain items that match the given criteria.
      * - Parameters:
      *   - service: Application identifier to associate with

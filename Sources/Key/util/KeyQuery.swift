@@ -1,10 +1,17 @@
 import Foundation
 import LocalAuthentication
 /**
- * - Description: A structure representing a query to interact with the Keychain. It encapsulates various parameters required to perform keychain operations such as storing, retrieving, and deleting keychain items.
- * - Remark: Ignore the access-group if running on the iPhone simulator. (Because simulator doesn't support access group etc)
- * - Remark: Apps that are built for the simulator aren't signed, so there's no keychain access group for the simulator to check.
- * - Remark: If a `SecItem` contains an access group attribute, `SecItemAdd` and `SecItemUpdate` on the simulator will return -25243 (errSecNoAccessForItem).
+ * - Description: A structure representing a query to interact with the
+ *                Keychain. It encapsulates various parameters required to
+ *                perform keychain operations such as storing, retrieving, and
+ *                deleting keychain items.
+ * - Remark: Ignore the access-group if running on the iPhone simulator.
+ *           (Because simulator doesn't support access group etc)
+ * - Remark: Apps that are built for the simulator aren't signed, so there's
+ *           no keychain access group for the simulator to check.
+ * - Remark: If a `SecItem` contains an access group attribute, `SecItemAdd`
+ *           and `SecItemUpdate` on the simulator will return -25243
+ *           (errSecNoAccessForItem).
  */
 public struct KeyQuery {
    public let key: String // The key to check for. (also called account)
@@ -16,7 +23,10 @@ public struct KeyQuery {
    public let context: LAContext? // Used for biometric-auth: An LAContext on which `evaluatePolicy` has succeeded.
    /**
     * This is the query to interact with KeyChain (You query the keychain database etc)
-    * - Description: This property represents the query dictionary used to interact with the Keychain. It contains various attributes such as the key, service, access group, access control, and context, which are used to configure the keychain operations.
+    * - Description: This property represents the query dictionary used to
+    *                interact with the Keychain. It contains various attributes
+    *                such as the key, service, access group, access control, and
+    *                context, which are used to configure the keychain operations.
     * - Fixme: ⚠️️ Maybe make key optional as well, as clearAll doesn't use key etc
     * - Parameters:
     *   - key: Dictionary key to store data at

@@ -6,7 +6,10 @@ import LocalAuthentication
 public final class KeyWriter {
    /**
     * Write data to `KeyChain`
-    * - Description: This method securely stores or updates data in the Keychain. If the key already exists, the associated data is updated. If the key does not exist, a new keychain item is created with the given key and data.
+    * - Description: This method securely stores or updates data in the
+    *                Keychain. If the key already exists, the associated data is
+    *                updated. If the key does not exist, a new keychain item is
+    *                created with the given key and data.
     * - Remark: Checks if key exists, if it does it updates the item, if it doesn't it creates the item
     * - Parameters:
     *   - key: Key to store data at
@@ -55,7 +58,10 @@ public final class KeyWriter {
    }
    /**
     * Update data for key in KeyChain
-    * - Description: This method updates the data associated with a given key in the Keychain. If the key exists, the associated data is updated with the new data provided. If the key does not exist, an error is thrown.
+    * - Description: This method updates the data associated with a given key in
+    *                the Keychain. If the key exists, the associated data is
+    *                updated with the new data provided. If the key does not
+    *                exist, an error is thrown.
     * - Note: More info: https://stackoverflow.com/a/50661280
     * - Parameters:
     *   - key: Key to store data at
@@ -85,7 +91,10 @@ public final class KeyWriter {
    }
    /**
     * Delete an existing item from the keychain
-    * - Description: Deletes a keychain item associated with the given key. If the item is successfully deleted, the method returns true. If the item does not exist or an error occurs during deletion, the method throws a KeyError with the corresponding status.
+    * - Description: Deletes a keychain item associated with the given key. If the
+    *                item is successfully deleted, the method returns true. If the
+    *                item does not exist or an error occurs during deletion, the
+    *                method throws a KeyError with the corresponding status.
     * - Note: More similar code: https://github.com/jrendel/SwiftKeychainWrapper/blob/91a7801307f4d0ff29f51a90dc7ee9e0b4250825/SwiftKeychainWrapper/KeychainWrapper.swift#L347
     * - Parameters:
     *   - key: Key to store data at
@@ -114,7 +123,11 @@ public final class KeyWriter {
    }
    /**
     * Clear all keys
-    * - Description: This method deletes all keychain items that match the given parameters such as service, accessGroup, access, and secClass. It's useful when you need to clear out all keychain items associated with a particular service, access group, or other specified attributes.
+    * - Description: This method deletes all keychain items that match the given
+    *                parameters such as service, accessGroup, access, and secClass.
+    *                It's useful when you need to clear out all keychain items
+    *                associated with a particular service, access group, or other
+    *                specified attributes.
     * - Remark: Delete items matching the current `ServiceName` and `AccessGroup` if one is set
     * - Remark: Use this over `Key.clearAll`, when faced ith stuborn items that doesn't want to be cleared
     * - Remark: Other types include: `kSecClassGenericPassword`, `kSecClassInternetPassword`, `kSecClassCertificate`, `kSecClassKey`, `kSecClassIdentity`

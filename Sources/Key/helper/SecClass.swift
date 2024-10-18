@@ -26,7 +26,8 @@ public enum SecClass: String {
    case keys
    /**
     * The class for identity items
-    * - Description: Represents keychain items that store identities, which are combinations of certificates and private keys.
+    * - Description: Represents keychain items that store identities, which are
+    *                combinations of certificates and private keys.
     */
    case identity
 }
@@ -36,8 +37,10 @@ public enum SecClass: String {
 extension SecClass {
     /**
      * Converts the SecClass enum case to its corresponding string value used in keychain queries.
-     * - Description: This computed property returns the raw string value associated with each SecClass enum case. 
-     *   These string values are used to specify the class of keychain items in keychain queries.
+     * - Description: This computed property returns the raw string value
+     *                associated with each SecClass enum case. These string
+     *                values are used to specify the class of keychain items in
+     *                keychain queries.
      * - Remark: We have to write set the string in-directly like this, direct reference won't work
      */
    public var rawValue: String {
@@ -57,8 +60,12 @@ extension SecClass {
     /**
      * Query to get all items in keychain
      * - Abstract: Constructs a query dictionary to retrieve all items in the keychain.
-     * - Description: This property generates a dictionary that can be used to query the keychain for all items of the specified class.
-     * - Remark: The query dictionary includes options to return the data, attributes, and references of the keychain items, and to match an unlimited number of items.
+     * - Description: This property generates a dictionary that can be
+     *                used to query the keychain for all items of the
+     *                specified class.
+     * - Remark: The query dictionary includes options to return the data,
+     *           attributes, and references of the keychain items, and to match
+     *           an unlimited number of items.
      */
    internal var allItemsQuery: QueryDict {
       [

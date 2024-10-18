@@ -6,7 +6,9 @@ extension OSStatus {
    /**
     * Creates readable error
     * - Description: Converts an OSStatus error code into a human-readable string.
-    * - Remark: Since OSStatus could be cryptic to understand, Apple provides an additional API called SecCopyErrorMessageString(_:_:) to obtain a human-readable string corresponding to these status codes.
+    * - Remark: Since OSStatus could be cryptic to understand, Apple provides
+    *           an additional API called SecCopyErrorMessageString(_:_:) to obtain a
+    *           human-readable string corresponding to these status codes.
     * - Note: More info: https://developer.apple.com/documentation/security/1542001-security_framework_result_codes
     * - Fixme: ⚠️️ Make better error etc, see github issues
     * - Fixme: ⚠️️ We could return KeyError if KeyError was enum etc?

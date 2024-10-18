@@ -1,5 +1,5 @@
 import Foundation
-// ⚠️️ Move to testing scope (First get unit-tests) explain?
+
 extension Data {
    /**
     * T -> Data
