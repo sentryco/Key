@@ -112,7 +112,7 @@ extension KeyTests {
    /**
     * Write and read item
     */
-   private func testWriteRead() {
+   func testWriteRead() {
       Swift.print("testWriteRead")
       guard let service: String = Bundle.main.bundleIdentifier else { Swift.print("err ⚠️️ Unable to get bundle id"); return }
       let accessControl: SecAccessControl? = SecAccessControlCreateWithFlags(nil, kSecAttrAccessibleWhenUnlocked, []/*.userPresence*/, nil)
