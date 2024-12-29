@@ -6,9 +6,9 @@
 > Comprehensive KeyChain framework
 
 ### Features
-- Provides support for requiring "biometric authentication" before read/write operations for added security
-- Supports a wide range of query types to enable flexible data retrieval
-- Allows for storing "dictionaries" as data, providing a convenient way to store and retrieve structured data
+- 🔒 Provides support for requiring "biometric authentication" before read/write operations for added security
+- 🔍 Supports a wide range of query types to enable flexible data retrieval
+- 📚 Allows for storing "dictionaries" as data, providing a convenient way to store and retrieve structured data
 
 ### Installation
 - SPM: `.package(url: "https://github.com/sentryco/Key", branch: "main")`
