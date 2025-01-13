@@ -229,20 +229,46 @@ extension KeyReader {
       case noMatch(_ status: OSStatus)
    }
 }
+ 
 extension KeyReader {
-   // Add Existence Check Method:
-   // Implement a method to check if a key exists in the keychain to prevent unnecessary read attempts and improve efficiency.
-   static func exists(key: String, service: String?) throws -> Bool {
-      var query: [String: Any] = [
+   /**
+    * Checks if a key exists in the keychain.
+    * - Parameters:
+    *   - key: The key to check.
+    *   - service: The service name associated with the key.
+    * - Returns: A Boolean indicating whether the key exists.
+    */
+   public static func exists(_ query: KeyQuery) throws -> Bool {
+      var queryDict: [String: Any] = [
          kSecClass as String: kSecClassGenericPassword,
-         kSecAttrAccount as String: key,
+         kSecAttrAccount as String: query.key,
          kSecReturnData as String: false,
          kSecMatchLimit as String: kSecMatchLimitOne
       ]
-      if let service = service {
-         query[kSecAttrService as String] = service
+      
+      // Map optional properties to their corresponding keychain attributes
+      let optionalAttributes: [(key: String, value: Any?)] = [
+         (kSecAttrService as String, query.service),
+         (kSecAttrAccessGroup as String, query.accessGroup),
+         (kSecAttrAccessible as String, query.access?.rawValue),
+         (kSecAttrAccessControl as String, query.accessControl),
+         (kSecUseAuthenticationContext as String, query.context)
+      ]
+      
+      for (key, value) in optionalAttributes {
+         if let value = value {
+            queryDict[key] = value
+         }
       }
-      let status = SecItemCopyMatching(query as CFDictionary, nil)
-      return status == errSecSuccess
+
+      let status = SecItemCopyMatching(queryDict as CFDictionary, nil)
+      switch status {
+      case errSecSuccess:
+         return true
+      case errSecItemNotFound:
+         return false
+      default:
+         throw KeyError.error(status)
+      }
    }
 }

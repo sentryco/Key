@@ -39,9 +39,7 @@ KeyParser.count() // 0
 
 ### Gotchas:
 - Please note that Keychain will persist values even after the app has been removed. Keep this in mind when using it for sensitive data storage.
-
-### Resources:
-- https://github.com/kishikawakatsumi/KeychainAccess
+ 
 
 ### Access control:
 Predefined item attribute constants used to get or set values
@@ -108,10 +106,61 @@ restored to a new device, these items will be missing.
  - kSecAttrAccessibleWhenUnlockedThisDeviceOnly: The data in the Keychain item can be accessed only while the device is unlocked by the user. The data won't be included in an iCloud or local backup.
  - kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly: Keychain data can be accessed only when the device is unlocked. This protection class is only available if a passcode is set on the device. The data won't be included in an iCloud or local backup.
 ```
+ 
+> [!NOTE]
+> Minimize the number of keychain accesses where possible, as they can be slow operations.
+
+> [!NOTE]
+> Cache values in memory if they are accessed frequently and security requirements allow.
+
+
+
+### Setting Up Keychain Sharing Capabilities
+
+If you are using `accessGroup` in your keychain queries to share keychain items between different apps or app extensions, you need to set up Keychain Sharing capabilities in your Xcode project.
+
+#### Steps to Enable Keychain Sharing:
+
+1. **Enable Keychain Sharing**:
+   - Go to your project **Target** in Xcode.
+   - Select the **Capabilities** tab.
+   - Turn on the **Keychain Sharing** capability.
+
+2. **Add Access Groups**:
+   - In the **Keychain Groups** section, add your access groups.
+   - The access group name should be in the format `$(AppIdentifierPrefix)com.yourcompany.shared`.
+
+3. **Use Access Group in Code**:
+   - When performing keychain operations, specify the `accessGroup` parameter:
+
+   ```swift
+   let query = KeyQuery(
+       key: "YourKey",
+       service: "com.yourcompany.yourapp",
+       accessGroup: "com.yourcompany.shared" // Your access group
+   )
+   ```
+
+#### Important Notes:
+
+- **App Identifier Prefix**: The `$(AppIdentifierPrefix)` is a unique prefix associated with your developer account. It is required when specifying access groups.
+- **Matching Access Groups**: Ensure that the access group specified in your app matches exactly across all apps and app extensions that need to share keychain items.
+- **Entitlements**: The access groups are specified in your app's entitlements file. Xcode manages this automatically when you add them in the **Capabilities** tab.
+
+#### Troubleshooting:
+
+- **Simulator Limitations**: Note that the iOS Simulator's keychain implementation does not support `kSecAttrAccessGroup`. Always test on a real device when using `accessGroup`.
+- **Provisioning Profiles**: Ensure that your provisioning profiles are set up correctly to include Keychain Sharing.
+
+For more detailed information, refer to Apple's documentation on [Sharing Access to Keychain Items Among a Collection of Apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps).
+
+
+
 
 ### Resources:
 - Looks really good: https://github.com/yankodimitrov/SwiftKeychain really nice protocol layer. Probably use dict + data to store.
 - Nice lib:https://github.com/kishikawakatsumi/KeychainAccess (also seems like a really good lib)
+- https://github.com/kishikawakatsumi/KeychainAccess
 
 ### Todo:
 - Implement `.userPresence` via AuthenticationPolicy [https://github.com/kishikawakatsumi](https://github.com/kishikawakatsumi)
@@ -130,3 +179,4 @@ restored to a new device, these items will be missing.
 - Add unit test to keywrapper in telemetry
 - Reduce Code Duplication: The KeyTests.swift
 - Modernizing Code Practices: Adopt Modern Swift Conventions: Some parts of the code could be modernized to use the latest Swift features and conventions, which might improve performance, readability, and maintainability.
+- add index to this readme

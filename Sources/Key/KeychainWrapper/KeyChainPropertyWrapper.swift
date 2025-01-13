@@ -66,7 +66,7 @@ public struct KeyChainPropertyWrapper: DynamicProperty {
                }
          } catch {
                // Handle error appropriately
-               print("Keychain error: \(error)")
+               print("⚠️️ Keychain error: \(error)")
          }
       }
    }
