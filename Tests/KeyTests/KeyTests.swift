@@ -13,7 +13,7 @@ final class KeyTests: XCTestCase {
    func test() throws {
 //      structTest() // ⚠️️ out of order
 //      bulkTest() // ⚠️️ out of order
-      testWriteRead()
+      testWriteRead() // ⚠️️ requires system password to be filled in once for every run, locally at least
 //      searchTest() // ⚠️️ out of order
 //      mixedTest() // ⚠️️ out of order
    }

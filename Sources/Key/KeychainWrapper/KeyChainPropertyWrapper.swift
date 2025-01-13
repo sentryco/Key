@@ -56,20 +56,18 @@ public struct KeyChainPropertyWrapper: DynamicProperty {
          data // Getter for the data
       }
       nonmutating set { // Setter for the wrapped value, marked as nonmutating to allow mutation of the state variable (indirect setter)
-         guard let newValue: Data = newValue else { // Check if newValue is not nil
-            data = nil // Set data to nil if newValue is nil
-            try? keychain.delete(key: key) // Attempt to delete the key from the keychain
-            return // Exit the setter early
-         }
-         do {
-            try keychain.set( // Attempt to set the key with the new value in the keychain
-               key: key, // Specifies the key to use for storing the data in the keychain
-               data: newValue // The data to be stored in the keychain
-            )
+          do {
+               if let newValue = newValue {
+                  try keychain.set(key: key, data: newValue)
+                  data = newValue
+               } else {
+                  try keychain.delete(key: key)
+                  data = nil
+               }
          } catch {
-            Swift.print("⚠️️ no data - err: \(error.localizedDescription)") // Log an error if setting the key fails
+               // Handle error appropriately
+               print("Keychain error: \(error)")
          }
-         data = newValue // Set the data to the new value
       }
    }
    /**
