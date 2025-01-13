@@ -229,3 +229,14 @@ extension KeyReader {
       case noMatch(_ status: OSStatus)
    }
 }
+extension KeyReader {
+   // Add Existence Check Method:
+   // Implement a method to check if a key exists in the keychain to prevent unnecessary read attempts and improve efficiency.
+   static func exists(key: String, service: String?) throws -> Bool {
+      var query = baseQuery(key: key, service: service)
+      query[kSecReturnData] = false
+      query[kSecMatchLimit] = kSecMatchLimitOne
+      let status = SecItemCopyMatching(query as CFDictionary, nil)
+      return status == errSecSuccess
+   }
+}

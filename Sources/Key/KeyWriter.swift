@@ -141,6 +141,8 @@ public final class KeyWriter {
     * - Returns: Returns true or false depending if the action was executed correctly
     * - Throws: status regarding the action performed
     */
+   // ⚠️️ deprecated
+   @available(*, deprecated, renamed: "deleteAllItems")
    /*@discardableResult */public static func deleteAll(secClass: SecClass = .genericPassword, service: String? = nil, accessGroup: String? = nil, access: KeyAccess? = nil, onComplete: ((_ error: KeyError?) -> Void)? = nil) /*throws -> Bool*/ {
       let queryDict: QueryDict = .clearAllQuery(
          service: service, // The service name to match. If nil, all services are matched.
@@ -161,5 +163,21 @@ public final class KeyWriter {
       // guard let status = status else { throw NSError.init(domain: "sec del did not respond", code: 0) }
       // if status != noErr { throw KeyError.error(status) } // Check for error
       // else { return true } // Clear was a success
+   }
+   /**
+    * - Fixme: ⚠️️ add doc
+    * - Parameters:
+    *   - queryDict: - Fixme: ⚠️️ add doc
+    *   - completion: - Fixme: ⚠️️ add doc
+    */
+   public static func deleteAllItems(queryDict: QueryDict, completion: @escaping (Result<Void, KeyError>) -> Void) {
+         DispatchQueue.global(qos: .background).async {
+            let status = SecItemDelete(queryDict as CFDictionary)
+            if status != noErr {
+               completion(.failure(.error(status)))
+            } else {
+               completion(.success(()))
+            }
+         }
    }
 }

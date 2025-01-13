@@ -122,14 +122,31 @@ public final class Key {
     *     print("Error deleting keychain items: \(error)")
     * }
     * ```
+    * - Fixme: ⚠️️ make this async later
     */
    public static func deleteAll(_ query: KeyQuery? = nil) throws {
-      KeyWriter.deleteAll(
-         secClass: query?.secClass ?? .genericPassword, // The security class to match. If nil, the generic password class is matched.
+      let queryDict: QueryDict = .clearAllQuery(
          service: query?.service, // The service name to match. If nil, all services are matched.
          accessGroup: query?.accessGroup, // The access group to match. If nil, all access groups are matched.
-         access: query?.access // The accessibility level to match. If nil, all accessibility levels are matched.
+         access: query?.access, // The accessibility level to match. If nil, all accessibility levels are matched.
+         secClass: query?.secClass ?? .genericPassword // The security class to match. If nil, the generic password class is matched.
       )
+      let semaphore = DispatchSemaphore(value: 0)
+      var deletionResult: Result<Void, KeyError>?
+      KeyWriter.deleteAllItems(queryDict: queryDict) { result in
+         deletionResult = result
+         semaphore.signal()
+      }
+      semaphore.wait()
+      switch deletionResult {
+      case .success:
+         return
+      case .failure(let error):
+         throw error
+      case .none:
+         // Should not happen
+         throw KeyError.error(errSecInternalComponent)
+      }
    }
    /**
     * Count (convenient)

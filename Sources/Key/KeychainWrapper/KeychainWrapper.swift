@@ -13,6 +13,8 @@ import Foundation
  * - Note: `accessGroup` is to define [kSecAttrAccessGroup](https://developer.apple.com/documentation/security/ksecattraccessgroup) to share keychain across your apps
  * - Note: there is also a keuchainwrapper in the telemetry package
  * - Fixme: ⚠️️ Figure out how to use actor etc 👈 do research how it fits in etc
+ * fixme: Use Result or async/await: Replace completion handlers and error handling with Result types or Swift's async/await to modernize the codebase and improve readability.
+ * fixme: Since keychain operations can be accessed from multiple threads, wrap keychain access in a serial queue or use actor to prevent race conditions.
  */
 /*actor*/ 
 class KeychainWrapper {
@@ -175,6 +177,7 @@ extension KeychainWrapper {
     *                is thrown detailing the issue.
     * - Parameter key: The key to use for retrieving data from the Keychain.
     * - Returns: The data associated with the given key, or throws an error if retrieval fails.
+    *  - Throws: `KeychainError` if retrieval fails.
     */
    func get(key: String) throws -> Data {
       var query: [CFString: Any] = baseQuery(key: key) // Prepare the query dictionary for the keychain item to retrieve
