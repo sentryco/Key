@@ -10,30 +10,35 @@
 - 🔍 Supports a wide range of query types to enable flexible data retrieval
 - 📚 Allows for storing "dictionaries" as data, providing a convenient way to store and retrieve structured data
 
-## Table of Contents
-
-- [Installation](#installation)
-- [Example](#example)
-- [Gotchas on macOS](#gotchas-on-macos)
-- [Access Control](#access-control)
-- [Setting Up Keychain Sharing Capabilities](#setting-up-keychain-sharing-capabilities)
-- [Resources](#resources)
-- [Todo](#todo)
-
 ### Installation
 - SPM: `.package(url: "https://github.com/sentryco/Key", branch: "main")`
 - Remember to set keychain entitlements and activate developer account
 
-### Example
+### Basic example
 ```swift
-let query: KeyQuery = .init(key: "John") // Create a query
-Key.set(data: .init(from: "abc123"), query: query) // Stores data
-Key.get(query).string // abc123
-Key.set(data: .init(from: "123abc"), query: query) // Stores data
-Key.get(query).string // 123abc
-Key.clear(query) // Removes data
-Key.clearAll() // Removes all keychain data
-KeyParser.count() // 0
+// Create a query with a unique key
+let query = KeyQuery(key: "John")
+// Store data in the keychain
+try Key.insert(data: Data(from: "abc123"), query: query)
+// Retrieve data from the keychain
+if let data = try Key.read(query) as? Data,
+let string = String(data: data, encoding: .utf8) {
+print(string) // Output: abc123
+}
+// Update the data
+try Key.insert(data: Data(from: "123abc"), query: query)
+// Retrieve the updated data
+if let data = try Key.read(query) as? Data,
+let string = String(data: data, encoding: .utf8) {
+print(string) // Output: 123abc
+}
+// Remove the data
+try Key.delete(query)
+// Clear all keychain data associated with your app
+try Key.deleteAll()
+// Get the count of keychain items
+let count = try Key.getCount()
+print(count) // Output: 0
 ```
 
 ### Example: Combine publishers to integrate smoothly with SwiftUI views.
@@ -102,6 +107,165 @@ struct ContentView: View {
     }
 }
 ```
+
+
+### Example: Storing and Retrieving Strings
+
+```swift
+// Create a query with a unique key
+let query = KeyQuery(key: "username")
+// Store a string in the keychain
+try Key.insert(string: "john_doe", query: query)
+// Retrieve the string from the keychain
+let username = try Key.readString(query)
+print(username) // Output: john_doe
+```
+
+
+### Example: Storing and Retrieving Codable Objects
+
+```swift
+// Define a Codable struct
+struct UserProfile: Codable {
+    let name: String
+    let age: Int
+}
+
+// Create a query with a unique key
+let query = KeyQuery(key: "userProfile")
+// Create an instance of UserProfile
+let profile = UserProfile(name: "Alice", age: 30)
+
+// Store the Codable object in the keychain
+try Key.insert(codable: profile, query: query)
+
+// Retrieve the Codable object from the keychain
+let retrievedProfile = try Key.readCodable(query, type: UserProfile.self)
+print(retrievedProfile.name) // Output: Alice
+print(retrievedProfile.age)  // Output: 30
+```
+
+
+
+### Example: Handling Access Control and Biometric Authentication
+
+```swift
+import LocalAuthentication
+
+// Create an access control with biometric authentication
+let accessControl = SecAccessControlCreateWithFlags(
+    nil,
+    kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+    .userPresence,
+    nil
+)!
+
+// Create a query with a unique key and access control
+let query = KeyQuery(
+    key: "secureNote",
+    accessControl: accessControl
+)
+
+// Store data that requires biometric authentication to access
+try Key.insert(string: "Top Secret Note", query: query)
+
+// Attempt to retrieve the data (will prompt for biometric authentication)
+do {
+    let secureNote = try Key.readString(query)
+    print(secureNote) // Output: Top Secret Note
+} catch {
+    print("Failed to retrieve secure note: \(error)")
+}
+```
+
+
+### Example: Deleting Items from the Keychain
+
+```swift
+// Create a query with a unique key
+let query = KeyQuery(key: "obsoleteKey")
+// Store some data
+try Key.insert(string: "Obsolete Data", query: query)
+// Delete the data from the keychain
+try Key.delete(query)
+// Attempt to read the deleted data
+do {
+    let data = try Key.readString(query)
+    print(data)
+} catch {
+    print("Data has been deleted from the keychain.") // Expected outcome
+}
+```
+
+
+### Example: Checking Existence of a Keychain Item
+
+```swift
+// Create a query with a unique key
+let query = KeyQuery(key: "userToken")
+// Check if the keychain item exists
+let exists = Key.exists(query)
+// 'exists' will be true if the item exists, false otherwise
+if exists {
+    print("Keychain item exists.")
+} else {
+    print("Keychain item does not exist.")
+}
+```
+
+
+### Example: Counting Keychain Items Associated with Your App
+
+```swift
+// Get the count of keychain items
+let itemCount = try Key.getCount()
+print("Number of keychain items: \(itemCount)")
+```
+
+
+### Example: Handling Errors
+
+```swift
+// Create a query with a key that doesn't exist
+let query = KeyQuery(key: "nonExistentKey")
+do {
+    // Attempt to read data that doesn't exist
+    let data = try Key.read(query) as? Data
+    print(data)
+} catch KeychainError.itemNotFound {
+    print("Item not found in keychain.")
+} catch {
+    print("An unexpected error occurred: \(error).")
+}
+```
+
+
+### Example: Accessing Keychain in Background Applications
+
+```swift
+// Create a query with 'afterFirstUnlock' access
+let query = KeyQuery(
+    key: "backgroundData",
+    access: .afterFirstUnlock
+)
+// Store data that can be accessed by background applications
+try Key.insert(string: "Background Accessible Data", query: query)
+```
+
+
+### Example: Using Custom Services and Access Groups
+
+```swift
+// Create a query with custom service and access group
+let query = KeyQuery(
+    key: "sharedKey",
+    service: "com.yourcompany.yourapp",
+    accessGroup: "com.yourcompany.shared"
+)
+// Store data that can be shared across your apps and extensions
+try Key.insert(string: "Shared Data", query: query)
+```
+
 
 ### Gotchas on macOS:
 - ⚠️ iOS Simulator's keychain implementation does not support `kSecAttrAccessGroup`. (always "test")
@@ -189,7 +353,6 @@ restored to a new device, these items will be missing.
 
 > [!NOTE]
 > Cache values in memory if they are accessed frequently and security requirements allow.
-
 
 
 ### Setting Up Keychain Sharing Capabilities
