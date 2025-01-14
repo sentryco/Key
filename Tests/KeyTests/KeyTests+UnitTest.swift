@@ -335,7 +335,7 @@ func testGetCountAccuracy() throws {
         // Note: We need to match the keychain item attributes used during insertion.
         
         // Modify the keychain item to have invalid data
-        var updateQuery: [String: Any] = [
+        let updateQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
             kSecAttrService as String: query.service ?? ""
@@ -404,4 +404,5 @@ func testGetCountAccuracy() throws {
         // Clean up
         try Key.delete(query)
     }
+   
 }

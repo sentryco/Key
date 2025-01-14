@@ -4,7 +4,7 @@
 # Key 🔑
 
 > Comprehensive KeyChain framework
-
+ 
 ### Features
 - 🔒 Provides support for requiring "biometric authentication" before read/write operations for added security
 - 🔍 Supports a wide range of query types to enable flexible data retrieval
@@ -24,6 +24,73 @@ Key.get(query).string // 123abc
 Key.clear(query) // Removes data
 Key.clearAll() // Removes all keychain data
 KeyParser.count() // 0
+```
+
+### Example: Combine publishers to integrate smoothly with SwiftUI views.
+
+```swift
+import Combine
+
+public class KeychainPublisher: ObservableObject {
+    @Published public var data: Data?
+    
+    private var key: String
+    private var query: KeyQuery
+    
+    public init(query: KeyQuery) {
+        self.key = query.key
+        self.query = query
+        self.loadData()
+    }
+    
+    private func loadData() {
+        DispatchQueue.global(qos: .background).async {
+            do {
+                let data = try Key.read(self.query) as? Data
+                DispatchQueue.main.async {
+                    self.data = data
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.data = nil
+                }
+            }
+        }
+    }
+    
+    public func updateData(_ newData: Data) {
+        DispatchQueue.global(qos: .background).async {
+            do {
+                try Key.insert(data: newData, query: self.query)
+                DispatchQueue.main.async {
+                    self.data = newData
+                }
+            } catch {
+                // Handle error
+            }
+        }
+    }
+}
+struct ContentView: View {
+    @StateObject private var keychain = KeychainPublisher(query: KeyQuery(key: "userToken"))
+    
+    var body: some View {
+        VStack {
+            if let data = keychain.data,
+               let token = String(data: data, encoding: .utf8) {
+                Text("Token: \(token)")
+            } else {
+                Text("No token stored")
+            }
+            Button("Update Token") {
+                let newToken = UUID().uuidString
+                if let data = newToken.data(using: .utf8) {
+                    keychain.updateData(data)
+                }
+            }
+        }
+    }
+}
 ```
 
 ### Gotchas on macOS:

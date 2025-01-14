@@ -17,7 +17,15 @@ import Foundation
  * - Note: More unit tests: https://gist.github.com/s-aska/e7ad24175fb7b04f78e7#file-keychaintests-swift
  * - Fixme: ⚠️️ Add has(query) assert method
  */
-public final class Key {
+public final class Key {}
+
+extension Key {
+   /**
+    * Ensure that keychain operations are thread-safe to prevent potential data races.
+    * Use a serial dispatch queue to synchronize access:
+    * - Fixme: ⚠️️ add doc
+    */
+   private static let keychainQueue = DispatchQueue(label: "key.keychainQueue")
    /**
     * Get result for `KeyQuery` Returns Data & throws Error msg
     * - Description: Retrieves the data associated with a given `KeyQuery` from
@@ -28,14 +36,16 @@ public final class Key {
     * Key.get(query: .init(key: "1234")).string // Reads data (you might have to cast as Data and init utf8 string from data now)
     */
    public static func read(_ query: KeyQuery) throws -> AnyObject {
-      try KeyReader.read(
-         key: query.key, // The key to read from the keychain
-         service: query.service, // The service name to match. If nil, all services are matched.
-         accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
-         access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
-         secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
-         context: query.context // The context to match. If nil, all contexts are matched.
-      )
+      try keychainQueue.sync {
+         try KeyReader.read(
+            key: query.key, // The key to read from the keychain
+            service: query.service, // The service name to match. If nil, all services are matched.
+            accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
+            access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
+            secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
+            context: query.context // The context to match. If nil, all contexts are matched.
+         )
+      }
    }
    /**
     * Set data for keyQuery (returns error msg)
@@ -51,16 +61,18 @@ public final class Key {
     * - Throws: Status error
     */
    public static func insert(data: Data, query: KeyQuery) throws {
-      try KeyWriter.insert(
-         data: data, // The data to write to the keychain
-         key: query.key, // The key to write to the keychain
-         service: query.service, // The service name to match. If nil, all services are matched.
-         accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
-         access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
-         secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
-         accessControl: query.accessControl, // The access control to apply to the keychain item. If nil, no access control is applied.
-         context: query.context // The context to match. If nil, all contexts are matched.
-      )
+      _ = try keychainQueue.sync {
+         try KeyWriter.insert(
+            data: data, // The data to write to the keychain
+            key: query.key, // The key to write to the keychain
+            service: query.service, // The service name to match. If nil, all services are matched.
+            accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
+            access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
+            secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
+            accessControl: query.accessControl, // The access control to apply to the keychain item. If nil, no access control is applied.
+            context: query.context // The context to match. If nil, all contexts are matched.
+         )
+      }
    }
    /**
     * Clear one item for a query
@@ -87,14 +99,16 @@ public final class Key {
     * ```
     */
    public static func delete(_ query: KeyQuery) throws {
-      try KeyWriter.delete(
-         key: query.key, // The key to delete from the keychain
-         service: query.service, // The service name to match. If nil, all services are matched.
-         accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
-         access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
-         secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
-         context: query.context // The context to match. If nil, all contexts are matched.
-      )
+      _ = try keychainQueue.sync {
+         try KeyWriter.delete(
+            key: query.key, // The key to delete from the keychain
+            service: query.service, // The service name to match. If nil, all services are matched.
+            accessGroup: query.accessGroup, // The access group to match. If nil, all access groups are matched.
+            access: query.access, // The accessibility level to match. If nil, all accessibility levels are matched.
+            secClass: query.secClass, // The security class to match. If nil, all security classes are matched.
+            context: query.context // The context to match. If nil, all contexts are matched.
+         )
+      }
    }
    /**
     * Clears all items in `KeyChain` that matches the `KeyQuery` (returns delete count)
@@ -133,9 +147,11 @@ public final class Key {
       )
       let semaphore = DispatchSemaphore(value: 0)
       var deletionResult: Result<Void, KeyError>?
-      KeyWriter.deleteAllItems(queryDict: queryDict) { result in
-         deletionResult = result
-         semaphore.signal()
+      keychainQueue.sync {
+         KeyWriter.deleteAllItems(queryDict: queryDict) { result in
+            deletionResult = result
+            semaphore.signal()
+         }
       }
       semaphore.wait()
       switch deletionResult {
@@ -175,13 +191,16 @@ public final class Key {
     * - Throws: An error if the delete operation fails.
     */
    public static func getCount(_ query: KeyQuery? = nil) throws -> Int {
-      try KeyReader.getCount(
+      try keychainQueue.sync {
+       try KeyReader.getCount(
          service: query?.service, // The service name to match. If nil, all services are matched.
          accessGroup: query?.accessGroup, // The access group to match. If nil, all access groups are matched.
          access: query?.access, // The accessibility level to match. If nil, all accessibility levels are matched.
          secClass: query?.secClass ?? .genericPassword, // The security class to match. If nil, the generic password class is matched.
          context: query?.context // The context to match. If nil, all contexts are matched.
       )
+    }
+      
    }
 }
 /**
