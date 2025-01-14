@@ -357,15 +357,51 @@ func testGetCountAccuracy() throws {
     * - Fixme: ⚠️️ add doc
     */
    func testReadNonExistentKey() throws {
-      let query = KeyQuery(key: "nonExistentKey")
-      do {
-         _ = try Key.read(query)
-         XCTFail("Expected to throw KeyError.itemNotFound")
-      } catch /*KeyError.itemNotFound*/ {
-         // Success
-         XCTAssertTrue(true == Optional(true))
-      //} catch {
-//         XCTFail("Unexpected error: \(error)")
-      }
+       let query = KeyQuery(key: "nonExistentKey")
+       do {
+           _ = try Key.read(query)
+           XCTFail("Expected to throw an error when reading a non-existent key")
+       } catch KeyError.error(let status) where status == errSecItemNotFound {
+           // Success, the expected error was thrown
+       } catch {
+           XCTFail("Unexpected error: \(error)")
+       }
    }
+    /**
+     * Tests storing and reading a string using Key.insert and Key.readString
+     */
+    func testStoreAndReadString() throws {
+        let key = "userTokenKey"
+        let query = KeyQuery(key: key)
+        let testString = "UserToken123"
+        // Store the string
+        try Key.insert(string: testString, query: query)
+        // Read the string back
+        let retrievedString = try Key.readString(query)
+        // Assert that the retrieved string matches the original
+        XCTAssertEqual(retrievedString, testString, "Retrieved string does not match the original")
+        // Clean up
+        try Key.delete(query)
+    }
+    
+    /**
+     * Tests storing and reading a Codable object using Key.insert and Key.readCodable
+     */
+    func testStoreAndReadCodableObject() throws {
+        struct UserProfile: Codable, Equatable {
+            let name: String
+            let age: Int
+        }
+        let key = "userProfileKey"
+        let query = KeyQuery(key: key)
+        let profile = UserProfile(name: "Alice", age: 30)
+        // Store the Codable object
+        try Key.insert(codable: profile, query: query)
+        // Read the Codable object back
+        let retrievedProfile = try Key.readCodable(query, type: UserProfile.self)
+        // Assert that the retrieved profile matches the original
+        XCTAssertEqual(retrievedProfile, profile, "Retrieved profile does not match the original")
+        // Clean up
+        try Key.delete(query)
+    }
 }

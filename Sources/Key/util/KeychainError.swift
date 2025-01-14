@@ -1,7 +1,13 @@
 import Foundation
-// fixme: add this
+// fixme: add this soon
+// In KeyReader.swift
+// if status == errSecItemNotFound {
+//     throw KeyError.itemNotFound
+// } else if status != errSecSuccess {
+//     throw KeyError.unhandledError(status: status)
+// }
 enum KeychainError: LocalizedError {
-   case itemNotFound
+    case itemNotFound
     case duplicateItem
     case unexpectedData
     case unhandledError(status: OSStatus)

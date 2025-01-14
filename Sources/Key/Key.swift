@@ -184,3 +184,49 @@ public final class Key {
       )
    }
 }
+/**
+ * Convenient
+ */
+extension Key {
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
+   public static func insert(
+      string: String,
+      query: KeyQuery
+   ) throws {
+      guard let data = string.data(using: .utf8) else {
+         throw KeychainError.unexpectedData
+      }
+      try insert(data: data, query: query)
+   }
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
+   public static func readString(_ query: KeyQuery) throws -> String {
+      guard let data = try read(query) as? Data,
+            let string = String(data: data, encoding: .utf8) else {
+         throw KeychainError.unexpectedData
+      }
+      return string
+   }
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
+   public static func insert<T: Codable>(
+      codable: T,
+      query: KeyQuery
+   ) throws {
+      let data = try JSONEncoder().encode(codable)
+      try insert(data: data, query: query)
+   }
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
+   public static func readCodable<T: Codable>(_ query: KeyQuery, type: T.Type) throws -> T {
+      guard let data = try read(query) as? Data else {
+         throw KeychainError.unexpectedData
+      }
+      return try JSONDecoder().decode(T.self, from: data)
+   }
+}
