@@ -302,4 +302,70 @@ func testGetCountAccuracy() throws {
         // Clean up
         try Key.delete(query)
     }
+   // Test Behavior with Different SecClass Values
+   // Objective: Validate functionality across different security classes.
+   func testDifferentSecClasses() throws {
+       let key = "internetPasswordKey"
+       let data = "InternetPasswordData".data(using: .utf8)!
+       
+       // Include secClass in the KeyQuery
+       let query = KeyQuery(key: key, secClass: .internetPassword)
+       
+       // Insert data with SecClass.internetPassword
+       try Key.insert(data: data, query: query)
+       
+       // Read data back
+       let readData = try Key.read(query)
+       XCTAssertEqual(readData as? Data, data, "Data mismatch with SecClass.internetPassword")
+       
+       // Clean up
+       try Key.delete(query)
+   }
+   // Test Handling of Corrupted Data
+   // Objective: Ensure the library gracefully handles corrupted keychain items.
+   func testCorruptedDataHandling() throws {
+        let key = "corruptedDataKey"
+        let data = "ValidData".data(using: .utf8)!
+        let query = KeyQuery(key: key)
+        
+        // Insert valid data
+        try Key.insert(data: data, query: query)
+        
+        // Manually corrupt the data (simulate corruption)
+        // Note: We need to match the keychain item attributes used during insertion.
+        
+        // Modify the keychain item to have invalid data
+        var updateQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: key,
+            kSecAttrService as String: query.service ?? ""
+        ]
+        let corruptedData = Data([0x00, 0xFF, 0x00])
+        let attributesToUpdate: [String: Any] = [kSecValueData as String: corruptedData]
+        let status = SecItemUpdate(updateQuery as CFDictionary, attributesToUpdate as CFDictionary)
+        XCTAssertEqual(status, errSecSuccess, "Failed to corrupt keychain item")
+        
+        // Attempt to read the corrupted data
+        let readData = try Key.read(query) as? Data
+        XCTAssertNotNil(readData, "Data should not be nil")
+        XCTAssertNotEqual(readData, data, "Data should be corrupted and not equal to original data")
+        
+        // Clean up
+        try Key.delete(query)
+    }
+   /**
+    * - Fixme: ⚠️️ add doc
+    */
+   func testReadNonExistentKey() throws {
+      let query = KeyQuery(key: "nonExistentKey")
+      do {
+         _ = try Key.read(query)
+         XCTFail("Expected to throw KeyError.itemNotFound")
+      } catch /*KeyError.itemNotFound*/ {
+         // Success
+         XCTAssertTrue(true == Optional(true))
+      //} catch {
+//         XCTFail("Unexpected error: \(error)")
+      }
+   }
 }

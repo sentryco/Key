@@ -155,6 +155,8 @@ If you are using `accessGroup` in your keychain queries to share keychain items 
 For more detailed information, refer to Apple's documentation on [Sharing Access to Keychain Items Among a Collection of Apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps).
 
 
+> [!IMPORTANT]
+> When running tests on the simulator, be aware that certain keychain features may not function identically to real devices, particularly biometric-related functions.
 
 
 ### Resources:
