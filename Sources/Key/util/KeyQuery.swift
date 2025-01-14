@@ -51,3 +51,23 @@ public struct KeyQuery {
       self.context = context
    }
 }
+/**
+ * - Fixme: ⚠️️ move to own file
+ */
+extension Dictionary where Key == String, Value == Any {
+   /**
+    * - Fixme: ⚠️️ begin using this throughout the codebase
+    * let query = Dictionary.keychainQuery(for: key, service: service, accessGroup: accessGroup)
+    */
+   static func keychainQuery(for key: String, service: String, accessGroup: String?) -> [String: Any] {
+      var query: [String: Any] = [
+         kSecClass as String: kSecClassGenericPassword,
+         kSecAttrAccount as String: key,
+         kSecAttrService as String: service
+      ]
+      if let accessGroup = accessGroup {
+         query[kSecAttrAccessGroup as String] = accessGroup
+      }
+      return query
+   }
+}

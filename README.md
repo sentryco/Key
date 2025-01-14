@@ -4,11 +4,21 @@
 # Key 🔑
 
 > Comprehensive KeyChain framework
- 
+
 ### Features
 - 🔒 Provides support for requiring "biometric authentication" before read/write operations for added security
 - 🔍 Supports a wide range of query types to enable flexible data retrieval
 - 📚 Allows for storing "dictionaries" as data, providing a convenient way to store and retrieve structured data
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Example](#example)
+- [Gotchas on macOS](#gotchas-on-macos)
+- [Access Control](#access-control)
+- [Setting Up Keychain Sharing Capabilities](#setting-up-keychain-sharing-capabilities)
+- [Resources](#resources)
+- [Todo](#todo)
 
 ### Installation
 - SPM: `.package(url: "https://github.com/sentryco/Key", branch: "main")`

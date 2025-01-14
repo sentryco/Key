@@ -6,6 +6,26 @@ import JSONSugar
 extension KeyTests {
    /**
     * - Fixme: ⚠️️ add doc
+    */
+   func testInsertAndReadData() throws {
+      // Test inserting and reading data from the keychain
+      let key = "testKeyInsertRead"
+      let data = "TestData".data(using: .utf8)!
+      let query = KeyQuery(key: key, service: "testService")
+      
+      // Insert data into the keychain
+      try Key.insert(data: data, query: query)
+      
+      // Read data back from the keychain
+      let retrievedData = try Key.read(query) as? Data
+      XCTAssertNotNil(retrievedData, "Retrieved data should not be nil")
+      XCTAssertEqual(retrievedData, data, "Retrieved data does not match inserted data")
+      
+      // Clean up
+      try Key.delete(query)
+   }
+   /**
+    * - Fixme: ⚠️️ add doc
     * - Fixme: ⚠️️ improve this test to do async testing
     */
    func testAsyncKeychainOperation() throws {
