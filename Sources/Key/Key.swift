@@ -21,9 +21,10 @@ public final class Key {}
 
 extension Key {
    /**
-    * Ensure that keychain operations are thread-safe to prevent potential data races.
-    * Use a serial dispatch queue to synchronize access:
-    * - Fixme: ⚠️️ add doc
+    * A serial dispatch queue to ensure thread-safe access to keychain operations.
+    *
+    * Keychain operations are performed synchronously on this queue to prevent data races
+    * and ensure consistency across concurrent accesses.
     */
    private static let keychainQueue = DispatchQueue(label: "key.keychainQueue")
    /**
@@ -208,7 +209,27 @@ extension Key {
  */
 extension Key {
    /**
-    * - Fixme: ⚠️️ add doc
+    * Inserts a UTF-8 encoded string into the keychain.
+    *
+    * This method converts the provided string into `Data` using UTF-8 encoding and inserts it into the keychain
+    * based on the specified `KeyQuery`. If the string cannot be encoded, it throws a `KeychainError.unexpectedData` error.
+    *
+    * - Parameters:
+    *   - string: The string to be stored in the keychain.
+    *   - query: The `KeyQuery` object specifying the parameters for storing the data in the keychain.
+    *
+    * ## Examples:
+    * ```
+    * do {
+    *     try Key.insert(string: "SecurePassword123!", query: KeyQuery(key: "userPassword"))
+    *     print("String successfully inserted into the keychain.")
+    * } catch {
+    *     print("Failed to insert string into the keychain: \(error)")
+    * }
+    * ```
+    *
+    * - Throws: `KeychainError.unexpectedData` if the string cannot be converted to `Data`.
+    *           Propagates errors thrown by the underlying `insert(data:query:)` method.
     */
    public static func insert(
       string: String,
@@ -219,8 +240,29 @@ extension Key {
       }
       try insert(data: data, query: query)
    }
+   
    /**
-    * - Fixme: ⚠️️ add doc
+    * Reads a UTF-8 encoded string from the keychain based on the specified query.
+    *
+    * This method retrieves the data associated with the provided `KeyQuery`, attempts to decode it as a UTF-8 string,
+    * and returns the resulting string. If the data cannot be decoded, it throws a `KeychainError.unexpectedData` error.
+    *
+    * - Parameter query: The `KeyQuery` object specifying the parameters for retrieving the data from the keychain.
+    *
+    * ## Examples:
+    * ```
+    * do {
+    *     let retrievedString = try Key.readString(KeyQuery(key: "userPassword"))
+    *     print("Retrieved string from keychain: \(retrievedString)")
+    * } catch {
+    *     print("Failed to read string from keychain: \(error)")
+    * }
+    * ```
+    *
+    * - Returns: The decoded string retrieved from the keychain.
+    *
+    * - Throws: `KeychainError.unexpectedData` if the data cannot be decoded as a UTF-8 string.
+    *           Propagates errors thrown by the underlying `read(_:)` method.
     */
    public static func readString(_ query: KeyQuery) throws -> String {
       guard let data = try read(query) as? Data,
@@ -229,8 +271,35 @@ extension Key {
       }
       return string
    }
+   
    /**
-    * - Fixme: ⚠️️ add doc
+    * Inserts a `Codable` object into the keychain by encoding it to JSON.
+    *
+    * This generic method encodes the provided `Codable` object into `Data` using `JSONEncoder` and inserts it into the keychain
+    * based on the specified `KeyQuery`. If encoding fails, it propagates the thrown error.
+    *
+    * - Parameters:
+    *   - codable: The `Codable` object to be stored in the keychain.
+    *   - query: The `KeyQuery` object specifying the parameters for storing the data in the keychain.
+    *
+    * ## Examples:
+    * ```
+    * struct User: Codable {
+    *     let username: String
+    *     let email: String
+    * }
+    *
+    * let user = User(username: "john_doe", email: "john@example.com")
+    *
+    * do {
+    *     try Key.insert(codable: user, query: KeyQuery(key: "currentUser"))
+    *     print("User successfully inserted into the keychain.")
+    * } catch {
+    *     print("Failed to insert user into the keychain: \(error)")
+    * }
+    * ```
+    *
+    * - Throws: Propagates errors thrown by `JSONEncoder` or the underlying `insert(data:query:)` method.
     */
    public static func insert<T: Codable>(
       codable: T,
@@ -239,8 +308,36 @@ extension Key {
       let data = try JSONEncoder().encode(codable)
       try insert(data: data, query: query)
    }
+   
    /**
-    * - Fixme: ⚠️️ add doc
+    * Reads and decodes a `Codable` object from the keychain based on the specified query.
+    *
+    * This generic method retrieves the data associated with the provided `KeyQuery`, decodes it into the specified `Codable` type
+    * using `JSONDecoder`, and returns the resulting object. If decoding fails, it propagates the thrown error.
+    *
+    * - Parameters:
+    *   - query: The `KeyQuery` object specifying the parameters for retrieving the data from the keychain.
+    *   - type: The type of the `Codable` object to decode.
+    *
+    * ## Examples:
+    * ```
+    * struct User: Codable {
+    *     let username: String
+    *     let email: String
+    * }
+    *
+    * do {
+    *     let user: User = try Key.readCodable(KeyQuery(key: "currentUser"), type: User.self)
+    *     print("Retrieved user from keychain: \(user)")
+    * } catch {
+    *     print("Failed to read user from the keychain: \(error)")
+    * }
+    * ```
+    *
+    * - Returns: The decoded `Codable` object retrieved from the keychain.
+    *
+    * - Throws: `KeychainError.unexpectedData` if the data cannot be cast to `Data`.
+    *           Propagates errors thrown by `JSONDecoder` or the underlying `read(_:)` method.
     */
    public static func readCodable<T: Codable>(_ query: KeyQuery, type: T.Type) throws -> T {
       guard let data = try read(query) as? Data else {

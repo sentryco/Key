@@ -391,7 +391,12 @@ func testGetCountAccuracy() throws {
         try Key.delete(query)
     }
    /**
-    * - Fixme: ⚠️️ add doc
+    * Tests reading a non-existent key from the keychain.
+    *
+    * - Objective: Verify that attempting to read a key that does not exist
+    *              in the keychain results in the appropriate error being thrown.
+    * - Expectation: The `Key.read` method should throw a `KeyError.error` with
+    *                status `errSecItemNotFound`.
     */
    func testReadNonExistentKey() throws {
        let query = KeyQuery(key: "nonExistentKey")
