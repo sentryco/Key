@@ -165,10 +165,13 @@ public final class KeyWriter {
       // else { return true } // Clear was a success
    }
    /**
-    * - Fixme: ⚠️️ add doc
+    * Deletes all keychain items that match the given query.
+    *
+    * - Description: This method asynchronously deletes all keychain items that match the specified query dictionary. It's useful when you need to clear out keychain items that meet specific criteria defined in the query.
+    *
     * - Parameters:
-    *   - queryDict: - Fixme: ⚠️️ add doc
-    *   - completion: - Fixme: ⚠️️ add doc
+    *   - queryDict: The query dictionary specifying the keychain items to delete. This should be constructed using the appropriate keychain query keys and values.
+    *   - completion: A closure that is called when the deletion is complete. It receives a `Result` indicating success or failure. On success, the result is `Void`; on failure, it contains a `KeyError`.
     */
    public static func deleteAllItems(queryDict: QueryDict, completion: @escaping (Result<Void, KeyError>) -> Void) {
          DispatchQueue.global(qos: .background).async {

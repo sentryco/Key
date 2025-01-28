@@ -5,7 +5,13 @@ import JSONSugar
 
 extension KeyTests {
    /**
-    * - Fixme: ⚠️️ add doc
+    * Tests the insertion and retrieval of data using the Keychain.
+    *
+    * This test verifies that data can be successfully inserted into the Keychain
+    * and subsequently retrieved. It ensures that the data read from the Keychain
+    * matches the data that was inserted.
+    *
+    * - Throws: An error if the insertion, retrieval, or deletion of data fails.
     */
    func testInsertAndReadData() throws {
       // Test inserting and reading data from the keychain
@@ -25,7 +31,12 @@ extension KeyTests {
       try Key.delete(query)
    }
    /**
-    * - Fixme: ⚠️️ add doc
+    * Tests the basic keychain insertion and retrieval operations.
+    *
+    * This test checks if data can be inserted into the Keychain and then read back successfully.
+    * It validates that the data retrieved matches the data inserted.
+    * 
+    * - Note: This test currently performs synchronous operations.
     * - Fixme: ⚠️️ improve this test to do async testing
     */
    func testAsyncKeychainOperation() throws {
@@ -279,7 +290,13 @@ func testGetCountAccuracy() throws {
       XCTAssertNoThrow(try Key.insert(data: data, query: query))
    }
    /**
-    * - Fixme: ⚠️️ add doc
+    * Tests the existence of a key in the Keychain.
+    *
+    * This test verifies that a key initially does not exist in the Keychain,
+    * inserts the key, verifies its existence, and finally deletes it to ensure
+    * that it no longer exists.
+    *
+    * - Throws: An error if any of the Keychain operations fail.
     */
    func testKeyExistsMethod() throws {
       let key = "existsTestKey"
